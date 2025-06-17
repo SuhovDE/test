@@ -1,0 +1,431 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/envelope.schema.json",
+  "$ref": "#/$defs/Envelope",
+  "$defs": {
+    "Envelope": {
+      "type": "object",
+      "description": "Top-level container holding the message header and body.",
+      "properties": {
+        "Header": {
+          "$ref": "#/$defs/Header",
+          "description": "Original name: (not specified). metadata",
+          "examples": [{}]
+        },
+        "Body": {
+          "$ref": "#/$defs/Body",
+          "description": "Original name: (not specified). Message body with arrival and departure records",
+          "examples": [{}]
+        }
+      },
+      "required": ["Header", "Body"]
+    },
+
+    "Header": {
+      "type": "object",
+      "properties": {
+        "SentDateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Original name: (not specified). Timestamp when this message was sent",
+          "examples": ["2025-04-29T06:50:50.00000Z"]
+        },
+        "SequenceNumber": {
+          "type": ["number", "null"],
+          "description": "Original name: (not specified). Incremental sequence identifier for the message. For full load is null and can be omitted",
+          "examples": [null]
+        },
+        "MessageType": {
+          "type": "string",
+          "description": "Original name: (not specified). Payload message type",
+          "enum": ["FullLoad", "Update"],
+          "examples": ["FullLoad"]
+        }
+      },
+      "required": ["SentDateTime", "MessageType"]
+    },
+
+    "Body": {
+      "type": "object",
+      "properties": {
+        "Arrivals": {
+          "type": "array",
+          "description": "Original name: (not specified). Array (can hold multiple records)",
+          "items": { "$ref": "#/$defs/Arrival" },
+          "examples": [[]]
+        },
+        "Departures": {
+          "type": "array",
+          "description": "Original name: (not specified). Array (can hold multiple records)",
+          "items": { "$ref": "#/$defs/Departure" },
+          "examples": [[]]
+        }
+      },
+      "required": ["Arrivals", "Departures"]
+    },
+
+    "Arrival": {
+      "type": "object",
+      "properties": {
+        "Operation": {
+          "type": "string",
+          "description": "Original name: (not specified). Operation type: insert, update, delete",
+          "enum": ["insert", "update", "delete"],
+          "examples": ["insert"]
+        },
+        "FlightLegRepeatSequence": {
+          "type": "number",
+          "description": "Original name: FLR. Flight leg repeat sequence number",
+          "examples": [0]
+        },
+        "FlightDesignator": {
+          "type": "string",
+          "description": "Original name: FLT. IATA flight designator",
+          "examples": ["LX087"]
+        },
+        "ScheduledDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Original name: SDT. Scheduled arrival date in ZRH (YYYY-MM-DD)",
+          "examples": ["2025-04-29"]
+        },
+        "CancellationFlag": {
+          "type": ["string", "null"],
+          "description": "Original name: CAN. Cancellation flag (null if not cancelled)",
+          "examples": [null]
+        },
+        "SchengenIndicator": {
+          "type": "string",
+          "description": "Original name: SCH. Schengen area indicator",
+          "enum": ["Y", "N"],
+          "examples": ["Y"]
+        },
+        "FlightType": {
+          "type": "number",
+          "description": "Original name: CAT. Flugkategorie → FLIRT Flighttype",
+          "examples": [10]
+        },
+        "Aircraft": {
+          "$ref": "#/$defs/Aircraft",
+          "description": "Original name: (not specified). Aircraft",
+          "examples": [{}]
+        },
+        "LinksAndShares": {
+          "$ref": "#/$defs/LinksAndShares",
+          "description": "Original name: (not specified). LinksAndShares",
+          "examples": [{}]
+        },
+        "Times": {
+          "$ref": "#/$defs/Times",
+          "description": "Original name: (not specified). Times",
+          "examples": [{}]
+        },
+        "Route": {
+          "$ref": "#/$defs/Route",
+          "description": "Original name: (not specified). Route",
+          "examples": [{}]
+        },
+        "Load": {
+          "$ref": "#/$defs/Load",
+          "description": "Original name: (not specified). Load",
+          "examples": [{}]
+        },
+        "Airport": {
+          "$ref": "#/$defs/Airport",
+          "description": "Original name: (not specified). Airport",
+          "examples": [{}]
+        },
+        "Delays": {
+          "$ref": "#/$defs/Delays",
+          "description": "Original name: (not specified). Delays",
+          "examples": [{}]
+        }
+      },
+      "required": ["Operation", "FlightLegRepeatSequence", "FlightDesignator", "ScheduledDate"]
+    },
+
+    "Aircraft": {
+      "type": "object",
+      "properties": {
+        "SeatCapacity": {
+          "type": "number",
+          "description": "Original name: CAP. Total seat capacity",
+          "examples": [236]
+        },
+        "AircraftRegistration": {
+          "type": "string",
+          "description": "Original name: REG. Aircraft registration code",
+          "examples": ["HBJHE"]
+        },
+        "IcaoAircraftModel": {
+          "type": "string",
+          "description": "Original name: ICT. Aircraft model type code (ICAO)",
+          "examples": ["A330"]
+        },
+        "IataAircraftModel": {
+          "type": "string",
+          "description": "Original name: TYP. Aircraft model type code (IATA)",
+          "examples": ["330"]
+        },
+        "AircraftSubtype": {
+          "type": "string",
+          "description": "Original name: TYS. Specific aircraft subtype code",
+          "examples": ["333"]
+        },
+        "NoiseCertificationLevel": {
+          "type": ["string", "null"],
+          "description": "Original name: NCL. Noise certification level",
+          "examples": [null]
+        }
+      }
+    },
+
+    "LinksAndShares": {
+      "type": "object",
+      "properties": {
+        "LinkedFlightRepeatSequence": {
+          "type": "number",
+          "description": "Original name: LKR. Linked flight repeat sequence number",
+          "examples": [0]
+        },
+        "LinkedFlightDesignator": {
+          "type": "string",
+          "description": "Original name: LKF. Linked flight IATA code",
+          "examples": ["LX252"]
+        },
+        "LinkedFlightDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Original name: LKS. Linked flight scheduled date (YYYY-MM-DD)",
+          "examples": ["2025-04-29"]
+        },
+        "CodeshareFlights": {
+          "type": "array",
+          "description": "Original name: CSF. Codeshare flight list (Airline + flight number) array",
+          "items": { "type": "string" },
+          "examples": [["AC 6820"]]
+        },
+        "MasterFlightNumber": {
+          "type": ["string", "null"],
+          "description": "Original name: MFF. Master flight number (if codeshared)",
+          "examples": [null]
+        },
+        "CodeshareStatus": {
+          "type": "string",
+          "description": "Original name: SST. Codeshare status (count or 'SF' for shared)",
+          "examples": ["01"]
+        }
+      }
+    },
+
+    "Times": {
+      "type": "object",
+      "properties": {
+        "OriginScheduledTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Original name: STP. Scheduled departure time from origin",
+          "examples": ["2025-04-28T21:25:00Z"]
+        },
+        "ScheduledArrivalTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Original name: STA. Scheduled time of arrival in ZRH",
+          "examples": ["2025-04-29T04:10:00Z"]
+        },
+        "TouchDownTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Original name: TDT. Touchdown time",
+          "examples": ["2025-04-29T04:08:36Z"]
+        },
+        "ActualArrivalTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Original name: ATA. Actual time of arrival (on-block)",
+          "examples": ["2025-04-29T04:15:07Z"]
+        },
+        "EstimatedArrivalTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Original name: ETA. Estimated arrival time",
+          "examples": ["2025-04-29T04:14:00Z"]
+        }
+      }
+    },
+
+    "Route": {
+      "type": "object",
+      "properties": {
+        "OriginAirportIATA": {
+          "type": "string",
+          "description": "Original name: ORG. Origin airport IATA code",
+          "examples": ["YUL"]
+        },
+        "OriginAirportICAO": {
+          "type": "string",
+          "description": "Original name: IOR. Origin airport ICAO code",
+          "examples": ["CYUL"]
+        },
+        "ViaStopIATA3": {
+          "type": ["string", "null"],
+          "description": "Original name: PV3. Third via location IATA code",
+          "examples": [null]
+        },
+        "ViaStopIATA2": {
+          "type": ["string", "null"],
+          "description": "Original name: PV2. Second via location IATA code",
+          "examples": [null]
+        },
+        "PreviousStopIATA": {
+          "type": "string",
+          "description": "Original name: PV1. First via location IATA code (ViaStopIATA1)",
+          "examples": ["YUL"]
+        },
+        "PreviousStopICAO": {
+          "type": "string",
+          "description": "Original name: ILL. Previous (closest to ZRH) stop ICAO code",
+          "examples": ["CYUL"]
+        }
+      }
+    },
+
+    "Load": {
+      "type": "object",
+      "properties": {
+        "PassengerCount": {
+          "type": "number",
+          "description": "Original name: PAX. Total number of passengers",
+          "examples": [229]
+        },
+        "ConnectingBaggageCount": {
+          "type": "number",
+          "description": "Original name: PCB. Total connecting baggage pieces",
+          "examples": [158]
+        },
+        "ConnectingPassengerCount": {
+          "type": "number",
+          "description": "Original name: PX5. Total connecting passengers",
+          "examples": [178]
+        },
+        "LocalPassengerCount": {
+          "type": "number",
+          "description": "Original name: PXL. Total local passengers",
+          "examples": [51]
+        },
+        "TransitPassengerCount": {
+          "type": ["number", "null"],
+          "description": "Original name: PXT. Total transit passengers",
+          "examples": [null]
+        },
+        "CargoWeightLoaded": {
+          "type": "number",
+          "description": "Original name: CGD. Local cargo/freight weight in kg",
+          "examples": [0]
+        },
+        "TransitCargoWeight": {
+          "type": "number",
+          "description": "Original name: CGF. Transit cargo/freight weight in kg",
+          "examples": [0]
+        },
+        "LocalCargoWeight": {
+          "type": "number",
+          "description": "Original name: CGL. Local cargo/freight weight in kg",
+          "examples": [0]
+        }
+      }
+    },
+
+    "Airport": {
+      "type": "object",
+      "properties": {
+        "City": {
+          "type": "string",
+          "description": "Original name: CTY. Origin city name",
+          "examples": ["Montreal"]
+        },
+        "Gate": {
+          "type": "string",
+          "description": "Original name: GAT. Assigned arrival gate",
+          "examples": ["E46"]
+        },
+        "GateExtraInformation": {
+          "type": "string",
+          "description": "Original name: GTX. Gate extra information",
+          "examples": ["B"]
+        },
+        "HandlingAgent": {
+          "type": "string",
+          "description": "Original name: HDL. Ground handling agent code",
+          "examples": ["SWP"]
+        },
+        "Runway": {
+          "type": "string",
+          "description": "Original name: RWY. Arrival runway identifier",
+          "examples": ["34"]
+        },
+        "ParkingStand": {
+          "type": "string",
+          "description": "Original name: TAR. Assigned parking stand/position",
+          "examples": ["E46"]
+        },
+        "Terminal": {
+          "type": "string",
+          "description": "Original name: TER. Arrival terminal number",
+          "examples": ["2"]
+        }
+      }
+    },
+
+    "Delays": {
+      "type": "object",
+      "properties": {
+        "IrregularityCode1": {
+          "type": ["string", "null"],
+          "description": "Original name: IR1. Irregularity reason codes",
+          "examples": [null]
+        },
+        "IrregularityCode2": {
+          "type": ["string", "null"],
+          "description": "Original name: IR2. Irregularity reason codes",
+          "examples": [null]
+        },
+        "IrregularityCode3": {
+          "type": ["string", "null"],
+          "description": "Original name: IR3. Irregularity reason codes",
+          "examples": [null]
+        },
+        "IrregularityCode4": {
+          "type": ["string", "null"],
+          "description": "Original name: IR4. Irregularity reason codes",
+          "examples": [null]
+        },
+        "DelayDuration1": {
+          "type": ["number", "null"],
+          "description": "Original name: DL1. Delay duration in minutes for code 1",
+          "examples": [null]
+        },
+        "DelayDuration2": {
+          "type": ["number", "null"],
+          "description": "Original name: DL2. Delay duration in minutes for code 2",
+          "examples": [null]
+        },
+        "DelayDuration3": {
+          "type": ["number", "null"],
+          "description": "Original name: DL3. Delay duration in minutes for code 3",
+          "examples": [null]
+        },
+        "DelayDuration4": {
+          "type": ["number", "null"],
+          "description": "Original name: DL4. Delay duration in minutes for code 4",
+          "examples": [null]
+        }
+      }
+    },
+
+    "Departure": {
+      "type": "object",
+      "description": "Departure object (definition pending)"
+    }
+  }
+}
